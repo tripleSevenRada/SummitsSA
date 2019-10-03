@@ -2,12 +2,44 @@ package sa
 
 import dataClasses.Elevation
 import dataClasses.Location
+import kotlinx.coroutines.*
 import service.DISCRETIZING_DISTANCE_AVERAGE
 import java.util.*
 import kotlin.math.exp
 import kotlin.math.roundToInt
 
 class SA {
+
+    fun saParallel(locations: List<Location>, scope: CoroutineScope): Map<Int, Int>{
+        val chunks = (locations.size / 100) + 1
+        val consumedResults = mutableListOf<Map<Int,Int>>()
+        val masterResult = mutableMapOf<Int, Int>()
+        runBlocking(scope.coroutineContext) {
+            val deferredArray = Array<Deferred<Map<Int, Int>>>(chunks) { index ->
+                async(Dispatchers.Default) {
+                    sa(locations, 100)
+                }
+            }
+            deferredArray.forEach { deferred ->
+                val deferredMap = deferred.await()
+                consumedResults.add(deferredMap)
+            }
+        }
+        consumedResults.forEach { consumed ->
+            mapMerge(masterResult, consumed)
+        }
+        return masterResult
+    }
+
+    fun mapMerge(master: MutableMap<Int, Int>, consumed: Map<Int, Int>){
+        consumed.forEach { (key, value) ->
+            if(master.containsKey(key)){
+                val sum = master[key]?.plus(value)
+                if (sum != null) master[key] = sum
+            } else master[key] = value
+        }
+    }
+
     fun sa(locations: List<Location>, restarts: Int = locations.size): Map<Int, Int> {
         val hits = mutableMapOf<Int, Int>()
         if (locations.size < 10) return hits

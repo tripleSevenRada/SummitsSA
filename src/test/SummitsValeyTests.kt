@@ -1,27 +1,49 @@
 package test
 
+import data.SmoothResult
 import dataClasses.Elevation
 import dataClasses.Location
+import geospatial.Route
 import junit.framework.Assert.assertEquals
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import org.junit.Test
+import preprocessing.SimpleBlur
+import preprocessing.Weight
 import sa.SA
 import sa.Direction
+import service.DiscretizingService
 import java.util.*
+import kotlin.system.measureTimeMillis
 
 class SummitsValleyTests {
     @Test
     fun monkeyTestSA() {
         val random = Random()
         val locations = mutableListOf<Location>()
-        repeat(4000) {
-            locations.add(Location(0.0, 0.0, Elevation.Value(random.nextDouble() * 100.0)))
-        }
+        //repeat(4000) {
+            //locations.add(Location(0.0, 0.0, Elevation.Value(random.nextDouble() * 100.0)))
+        //}
         var count = 0
         repeat(120) {
-            val map = SA().sa(locations)
-            println(map.size)
-            if (count % 2 == 0) println(map)
+            var map: Map<Int, Int>? = null
+            var pmap: Map<Int, Int>? = null
+            val timeMap = measureTimeMillis { map = SA().sa(locations) }
+            val job = Job()
+            val scope = CoroutineScope(Dispatchers.Default + job)
+            val timePmap = measureTimeMillis { pmap = SA().saParallel(locations, scope) }
+            println("\n\nlocation.size ${locations.size}")
+            println("map.size - ${map?.size} pmap.size - ${pmap?.size}")
+            println("map.time - $timeMap pmap.time - $timePmap")
+            println("-----------------------------MAP")
+            println(map)
+            println("-----------------------------P_MAP")
+            println(pmap)
             count++
+            repeat(40) {
+                locations.add(Location(0.0, 0.0, Elevation.Value(random.nextDouble() * 100.0)))
+            }
         }
     }
 
@@ -48,12 +70,16 @@ class SummitsValleyTests {
         )
         paths.forEach { path ->
             val locations = parseGPX(path)
+            val locationsDiscretized = DiscretizingService().discretizeParallel(Route(locations))
+            val weight = Weight.VERY_HEAVY
+            val smoothLocations: List<Location> = (SimpleBlur().smooth(locationsDiscretized, weight) as SmoothResult.Success).smoothLocations
+            val job = Job()
+            val scope = CoroutineScope(Dispatchers.Default + job)
+            val map: Map<Int, Int> = SA().saParallel(smoothLocations, scope)
+            println()
+            println()
             println(path)
-            //repeat(1000) {
-            //println(SA().sa(locations))
-            //}
-            val map: Map<Int, Int> = SA().sa(locations)
-            printMapAsGPXWaypoints(locations, map)
+            printMapAsGPXWaypoints(smoothLocations, map)
         }
     }
 
@@ -98,6 +124,30 @@ class SummitsValleyTests {
                 println("i: $i, distance: $distance, shiftedForward: $shiftedForward2, shiftedBackward: $shiftedBackward2")
             }
         }
+    }
+
+    @Test
+    fun testMapMerge(){
+        val master = mutableMapOf<Int, Int>()
+        val consumed = mutableMapOf<Int, Int>()
+        val sa = SA()
+        sa.mapMerge(master, consumed)
+        assert(master.isEmpty())
+        consumed[1] = 1
+        sa.mapMerge(master, consumed)
+        assert(master.size == 1)
+        assert(master[1] == 1)
+        sa.mapMerge(master, consumed)
+        assert(master.size == 1)
+        assert(master[1] == 2)
+        sa.mapMerge(master, consumed)
+        assert(master.size == 1)
+        assert(master[1] == 3)
+        consumed.clear()
+        consumed[2] = 22
+        sa.mapMerge(master, consumed)
+        assert(master.size == 2)
+        assert(master[1] == 3 && master[2] == 22)
     }
 
     @Test
