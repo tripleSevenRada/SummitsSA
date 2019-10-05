@@ -13,7 +13,10 @@ import preprocessing.SimpleBlur
 import preprocessing.Weight
 import sa.SA
 import sa.Direction
+import sa.RESTARTS_PER_DEFERRED
+import sa.numberOfDeferredInvocations
 import service.DiscretizingService
+import java.io.File
 import java.util.*
 import kotlin.system.measureTimeMillis
 
@@ -26,25 +29,36 @@ class SummitsValleyTests {
             //locations.add(Location(0.0, 0.0, Elevation.Value(random.nextDouble() * 100.0)))
         //}
         var count = 0
-        repeat(120) {
-            var map: Map<Int, Int>? = null
-            var pmap: Map<Int, Int>? = null
-            val timeMap = measureTimeMillis { map = SA().sa(locations) }
+        repeat(80) {
+            var map: Map<Int, Int> = mutableMapOf()
+            var pmap: Map<Int, Int> = mutableMapOf()
+            val timeMap = measureTimeMillis { map = SA().sa(locations,
+                RESTARTS_PER_DEFERRED * numberOfDeferredInvocations(locations.size)) }
             val job = Job()
             val scope = CoroutineScope(Dispatchers.Default + job)
             val timePmap = measureTimeMillis { pmap = SA().saParallel(locations, scope) }
             println("\n\nlocation.size ${locations.size}")
-            println("map.size - ${map?.size} pmap.size - ${pmap?.size}")
+            println("map.size - ${map.size} pmap.size - ${pmap.size}")
             println("map.time - $timeMap pmap.time - $timePmap")
             println("-----------------------------MAP")
             println(map)
             println("-----------------------------P_MAP")
             println(pmap)
+
+            assertEquals(mapSumInt(map), mapSumInt(pmap))
             count++
             repeat(40) {
                 locations.add(Location(0.0, 0.0, Elevation.Value(random.nextDouble() * 100.0)))
             }
         }
+    }
+
+    private fun <K, V: Number>mapSumInt(map: Map<K,V>): Int{
+        var sum = 0
+        map.forEach { k, v ->
+            sum += v.toInt()
+        }
+        return sum
     }
 
     @Test
@@ -61,17 +75,24 @@ class SummitsValleyTests {
     }
 
     @Test
-    fun readFromGPXRunSA() {
+    fun readFromGPXRunSAExportIntoFile() {
         val paths = mutableListOf<String>(
             "/home/radim/Dropbox/outFit/summits/s1.gpx",
             "/home/radim/Dropbox/outFit/summits/s2.gpx",
             "/home/radim/Dropbox/outFit/summits/s3.gpx",
             "/home/radim/Dropbox/outFit/summits/s4.gpx"
         )
+        val outputPaths = mutableListOf<String>(
+            "/home/radim/Dropbox/outFit/summits/s1-summits.gpx",
+            "/home/radim/Dropbox/outFit/summits/s2-summits.gpx",
+            "/home/radim/Dropbox/outFit/summits/s3-summits.gpx",
+            "/home/radim/Dropbox/outFit/summits/s4-summits.gpx"
+        )
+        var countInOutput = 0
         paths.forEach { path ->
             val locations = parseGPX(path)
             val locationsDiscretized = DiscretizingService().discretizeParallel(Route(locations))
-            val weight = Weight.VERY_HEAVY
+            val weight = Weight.VERY_LIGHT
             val smoothLocations: List<Location> = (SimpleBlur().smooth(locationsDiscretized, weight) as SmoothResult.Success).smoothLocations
             val job = Job()
             val scope = CoroutineScope(Dispatchers.Default + job)
@@ -79,10 +100,57 @@ class SummitsValleyTests {
             println()
             println()
             println(path)
-            printMapAsGPXWaypoints(smoothLocations, map)
+            println("export -> ${outputPaths[countInOutput]}")
+            val builder = StringBuilder()
+
+            builder.append("<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>\n" +
+                    "<gpx version=\"1.1\" creator=\"Locus Map, addon test\"\n" +
+                    " xmlns=\"http://www.topografix.com/GPX/1/1\"\n" +
+                    " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+                    " xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd\"\n" +
+                    " xmlns:gpx_style=\"http://www.topografix.com/GPX/gpx_style/0/2\"\n" +
+                    " xmlns:gpxx=\"http://www.garmin.com/xmlschemas/GpxExtensions/v3\"\n" +
+                    " xmlns:gpxtrkx=\"http://www.garmin.com/xmlschemas/TrackStatsExtension/v1\"\n" +
+                    " xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v2\"\n" +
+                    " xmlns:locus=\"http://www.locusmap.eu\">\n" +
+                    "\t<metadata>\n" +
+                    "\t\t<desc>File with points/tracks from an Locus addon - test</desc>\n" +
+                    "\t</metadata>\n")
+            builder.append(getMapAsGPXWaypoints(smoothLocations, map))
+            builder.append("<trk>\n" +
+                    "<name>test</name>\n" +
+                    "\t<extensions>\n" +
+                    "\t\t<gpx_style:line>\n" +
+                    "\t\t\t<gpx_style:color>0000FF</gpx_style:color>\n" +
+                    "\t\t\t<gpx_style:opacity>0.59</gpx_style:opacity>\n" +
+                    "\t\t\t<gpx_style:width>6.0</gpx_style:width>\n" +
+                    "\t\t</gpx_style:line>\n" +
+                    "\t\t<locus:activity>cycling</locus:activity>\n" +
+                    "\t\t<locus:rteComputeType>9</locus:rteComputeType>\n" +
+                    "\t\t<locus:rteSimpleRoundabouts>1</locus:rteSimpleRoundabouts>\n" +
+                    "\t</extensions>\n" +
+                    "<trkseg>\n")
+            builder.append(getLocationsAsGPXTrackpoints(smoothLocations))
+            builder.append("</trkseg>\n" +
+                    "</trk>\n" +
+                    "</gpx>")
+            File(outputPaths[countInOutput]).writeText(builder.toString())
+            countInOutput++
         }
     }
-
+    /*
+    <trkpt lat="50.04977736668049" lon="14.489408934401386"><ele>281.37770600258295</ele></trkpt>
+     */
+    private fun getLocationsAsGPXTrackpoints(locations: List<Location>): String{
+        val builder = StringBuilder()
+        locations.forEach { location ->
+            val lat = location.lat
+            val lon = location.lon
+            val ele = (location.elevation as Elevation.Value).elevation
+            builder.append("<trkpt lat=\"$lat\" lon=\"$lon\"><ele>$ele</ele></trkpt>\n")
+        }
+        return builder.toString()
+    }
     /*
     <wpt lat="46.85446996294488" lon="10.04142969759414">
         <ele>2332</ele>
@@ -92,16 +160,17 @@ class SummitsValleyTests {
         <type>Horská chata</type>
     </wpt>
     */
-
-    private fun printMapAsGPXWaypoints(locations: List<Location>, map: Map<Int, Int>) {
+    private fun getMapAsGPXWaypoints(locations: List<Location>, map: Map<Int, Int>): String {
         //map: index -> hits
+        val builder = StringBuilder()
         val sorted = map.toSortedMap()
         sorted.forEach { (key, value) ->
-            println("<wpt lat=\"${locations[key].lat}\" lon=\"${locations[key].lon}\">")
-            println("<ele>${(locations[key].elevation as Elevation.Value).elevation}</ele>")
-            println("<name>hits:$value</name>")
-            println("</wpt>")
+            builder.append("<wpt lat=\"${locations[key].lat}\" lon=\"${locations[key].lon}\">\n")
+            builder.append("<ele>${(locations[key].elevation as Elevation.Value).elevation}</ele>\n")
+            builder.append("<name>hits:$value</name>\n")
+            builder.append("</wpt>\n")
         }
+        return builder.toString()
     }
 
     @Test

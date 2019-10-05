@@ -8,16 +8,19 @@ import java.util.*
 import kotlin.math.exp
 import kotlin.math.roundToInt
 
+const val RESTARTS_PER_DEFERRED = 100
+fun numberOfDeferredInvocations(size: Int): Int = (size / RESTARTS_PER_DEFERRED) + 1
+
 class SA {
 
     fun saParallel(locations: List<Location>, scope: CoroutineScope): Map<Int, Int>{
-        val chunks = (locations.size / 100) + 1
+        val invocations = numberOfDeferredInvocations(locations.size)
         val consumedResults = mutableListOf<Map<Int,Int>>()
         val masterResult = mutableMapOf<Int, Int>()
         runBlocking(scope.coroutineContext) {
-            val deferredArray = Array<Deferred<Map<Int, Int>>>(chunks) { index ->
+            val deferredArray = Array<Deferred<Map<Int, Int>>>(invocations) { index ->
                 async(Dispatchers.Default) {
-                    sa(locations, 100)
+                    sa(locations, RESTARTS_PER_DEFERRED)
                 }
             }
             deferredArray.forEach { deferred ->
