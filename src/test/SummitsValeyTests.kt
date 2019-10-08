@@ -11,6 +11,7 @@ import kotlinx.coroutines.Job
 import org.junit.Test
 import preprocessing.SimpleBlur
 import preprocessing.Weight
+import prune.FilterNoiseSummits
 import sa.SA
 import sa.Direction
 import sa.RESTARTS_PER_DEFERRED
@@ -365,5 +366,14 @@ class SummitsValleyTests {
                 in 11..100 -> assertEquals(11, climbed)
             }
         }
+    }
+
+    @Test
+    fun testFilterNoiseSummits(){
+        val map = mutableMapOf<Int, Int>()
+        for(i in 0 until 20) map[i] = 5
+        for (i in 20 until 29) map[i] = 311
+        val filtered = FilterNoiseSummits().filterMap(map)
+        assertEquals(9, filtered.size)
     }
 }

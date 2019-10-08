@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import preprocessing.SimpleBlur
 import preprocessing.Weight
+import prune.FilterNoiseSummits
 import sa.RESTARTS_PER_DEFERRED
 import sa.SA
 import sa.numberOfDeferredInvocations
@@ -25,7 +26,7 @@ class SummitsValleysService {
         val job = Job()
         val scope = CoroutineScope(Dispatchers.Default + job)
         val map: Map<Int, Int> = SA().saParallel(locationsSmooth, scope)
-        val totalRestarts = numberOfDeferredInvocations(locationsSmooth.size) * RESTARTS_PER_DEFERRED
+        val mapNoiseFiltered = FilterNoiseSummits().filterMap(map.toMutableMap())
 
         return SAResult.Failure("not implemented")
     }
