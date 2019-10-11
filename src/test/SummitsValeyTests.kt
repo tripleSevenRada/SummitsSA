@@ -98,6 +98,13 @@ class SummitsValleyTests {
             val job = Job()
             val scope = CoroutineScope(Dispatchers.Default + job)
             val map: Map<Int, Int> = SA().saParallel(smoothLocations, scope)
+            val mapNoiseFiltered: Map<Int, Int> = FilterNoiseSummits().filterMap(map.toMutableMap())
+            println()
+            println()
+            println("map")
+            println("$map")
+            println("mapNoiseFiltered")
+            println("$mapNoiseFiltered")
             println()
             println()
             println(path)
@@ -375,5 +382,20 @@ class SummitsValleyTests {
         for (i in 20 until 29) map[i] = 311
         val filtered = FilterNoiseSummits().filterMap(map)
         assertEquals(9, filtered.size)
+
+        val mapEmpty = mutableMapOf<Int, Int>()
+        assert(FilterNoiseSummits().filterMap(mapEmpty).isEmpty())
+
+        val mapSingle = mutableMapOf<Int, Int>()
+        mapSingle[1] = 100
+        assert(FilterNoiseSummits().filterMap(mapSingle).size == 1 &&
+                FilterNoiseSummits().filterMap(mapSingle)[1] == 100)
+
+        val mapTwo = mutableMapOf<Int, Int>()
+        mapTwo[1] = 100
+        mapTwo[2] = 4
+        assert(FilterNoiseSummits().filterMap(mapTwo).size == 1 &&
+                FilterNoiseSummits().filterMap(mapSingle)[1] == 100)
+
     }
 }

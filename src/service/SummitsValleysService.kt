@@ -26,7 +26,7 @@ class SummitsValleysService {
         val job = Job()
         val scope = CoroutineScope(Dispatchers.Default + job)
         val map: Map<Int, Int> = SA().saParallel(locationsSmooth, scope)
-        val mapNoiseFiltered = FilterNoiseSummits().filterMap(map.toMutableMap())
+        val mapNoiseFiltered: Map<Int, Int> = FilterNoiseSummits().filterMap(map.toMutableMap())
 
         return SAResult.Failure("not implemented")
     }

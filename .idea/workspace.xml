@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5dbf06fb-fd4e-4a61-b498-5f65f69398ae" name="Default Changelist" comment="" />
+    <list default="true" id="5dbf06fb-fd4e-4a61-b498-5f65f69398ae" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/prune/SummitsFilters.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/IntegrationTestsSummitsSADetect.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/SummitsFiltersTests.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SummitsSA.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/SummitsSA.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/service/SummitsValleysService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/service/SummitsValleysService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/RouteFactory.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/RouteFactory.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/SummitsValeyTests.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/SummitsValeyTests.kt" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,7 +57,45 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="JUnit.SummitsValleyTests">
+  <component name="RunManager" selected="JUnit.All in SummitsSA">
+    <configuration name="All in SummitsSA" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="SummitsSA" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="IntegrationTestsSummitsSADetect" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="SummitsSA" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="test.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="test.IntegrationTestsSummitsSADetect" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SummitsFiltersTests" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="SummitsSA" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="test.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="test.SummitsFiltersTests" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="SummitsValleyTests" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="SummitsSA" />
       <extension name="coverage">
@@ -96,61 +143,13 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="SummitsValleyTests.testHillClimberAndLockOnFirstIfEqual" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="SummitsSA" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="test.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="test" />
-      <option name="MAIN_CLASS_NAME" value="test.SummitsValleyTests" />
-      <option name="METHOD_NAME" value="testHillClimberAndLockOnFirstIfEqual" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="SummitsValleyTests.testMapMerge" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="SummitsSA" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="test.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="test" />
-      <option name="MAIN_CLASS_NAME" value="test.SummitsValleyTests" />
-      <option name="METHOD_NAME" value="testMapMerge" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="SummitsValleyTests.testShiftForwardBackward" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="SummitsSA" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="test.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="test" />
-      <option name="MAIN_CLASS_NAME" value="test.SummitsValleyTests" />
-      <option name="METHOD_NAME" value="testShiftForwardBackward" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.All in SummitsSA" />
+        <item itemvalue="JUnit.SummitsFiltersTests" />
+        <item itemvalue="JUnit.IntegrationTestsSummitsSADetect" />
         <item itemvalue="JUnit.SummitsValleyTests" />
         <item itemvalue="JUnit.SummitsValleyTests.readFromGPXRunSA" />
-        <item itemvalue="JUnit.SummitsValleyTests.testMapMerge" />
-        <item itemvalue="JUnit.SummitsValleyTests.testShiftForwardBackward" />
-        <item itemvalue="JUnit.SummitsValleyTests.testHillClimberAndLockOnFirstIfEqual" />
       </list>
     </recent_temporary>
   </component>
