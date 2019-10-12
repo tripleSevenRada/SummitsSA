@@ -2,14 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5dbf06fb-fd4e-4a61-b498-5f65f69398ae" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/prune/SummitsFilters.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/IntegrationTestsSummitsSADetect.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/SummitsFiltersTests.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SummitsSA.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/SummitsSA.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/service/SummitsValleysService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/service/SummitsValleysService.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/RouteFactory.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/RouteFactory.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/SummitsValeyTests.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/SummitsValeyTests.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/prune/SummitsFilters.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/prune/SummitsFilters.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/SummitsFiltersTests.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/SummitsFiltersTests.kt" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
